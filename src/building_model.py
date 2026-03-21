@@ -23,20 +23,34 @@ def linear_regression(data, y,):
     beta_head = np.linalg.inv(X.T.dot(X)).dot(X.T.dot(y))
     return beta_head.round(4), X
 
-X = data[["lnX1", "X2", "X3", "X4"]]
+X_col = data[["lnX1", "X2", "X3", "X4"]]
 
 
-output, X = linear_regression(X,y)
+output, X = linear_regression(X_col,y)
 print(output.round(3))
 
 t = X.shape[0]
 s2 = (1/(t-len(output))) * (y - X.dot(output)).T.dot(y- X.dot(output))
 print(f"s = {np.sqrt(s2.round(2))}")
-
-y_head = X.dot(output)
-R2 = np.sum((y_head - np.mean(y_head))**2) / np.sum((y - np.mean(y))**2)
-print(f"R2 = {R2.round(2)}")
-
 V = np.sqrt(s2) / np.mean(y) * 100
 print(f"V = {V.round(2)}")
 
+y_head = X.dot(output)
+R2 = np.sum((y_head - np.mean(y_head))**2) / np.sum((y - np.mean(y))**2)
+print(f"R2 = {R2.round(4)}")
+
+fi2 = 1 - R2
+print(f"fi2 = {fi2.round(4)}")
+
+# Macierz kowariancji estymatora MNK
+kow = s2 * np.linalg.inv((X.T.dot(X)))
+print(kow)
+
+# Średnie błędy szacunku parametrów strukturalnych
+db = np.sqrt(np.diag(kow))
+print(db.round(3))
+
+# Ocena jakości estymacji 
+print(abs(output.reshape(1,-1)/db).round(3))
+
+print(X_col.columns)
